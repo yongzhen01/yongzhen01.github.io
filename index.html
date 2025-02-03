@@ -3,78 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>记录我的时刻</title>
+    <title>记录我的璀璨时刻</title>
     <style>
-        /* 整合后的样式 */
+        /* 整合后的样式，增加了更多视觉效果 */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
             line-height: 1.6;
-            background: #f4f4f9; /* 柔和的浅灰色背景 */
-            color: #333; /* 深灰色文字，与背景形成对比 */
+            background: #f0f4f8; /* 更为柔和的渐变背景 */
+            color: #2c3e50; /* 深邃的文字颜色 */
         }
         header {
-            background: #6c757d; /* 深灰色头部背景 */
-            color: #fff;
+            background: #34495e; /* 深邃的蓝色头部背景 */
+            color: #ecf0f1;
             padding: 20px 0;
             text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
         }
         nav {
-            background: #5a6268; /* 比头部稍深的灰色导航栏背景 */
+            background: #2c3e50; /* 头部背景稍浅的蓝色 */
             text-align: center;
             padding: 10px 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* 添加轻微阴影 */
         }
         nav a {
-            color: #fff;
+            color: #ecf0f1;
             margin: 0 15px;
             text-decoration: none;
-            padding: 5px 10px; /* 增加内边距，使链接更易点击 */
-            border-radius: 5px; /* 圆角边框，使链接看起来更柔和 */
-            transition: all 0.3s ease; /* 添加过渡效果 */
+            padding: 8px 16px; /* 更大的内边距 */
+            border-radius: 8px; /* 更大的圆角 */
+            transition: all 0.3s ease; /* 平滑的过渡效果 */
         }
         nav a:hover {
-            background: #495057; /* 鼠标悬停时改变链接背景色 */
-            animation: fadeInOut 0.5s forwards; /* 应用淡入淡出动画 */
-        }
-        @keyframes fadeInOut {
-            0% {
-                opacity: 0;
-            }
-            50% {
-                opacity: 1;
-            }
-            100% {
-                opacity: 0;
-            }
+            background: #2980b9; /* 鼠标悬停时变为鲜艳的蓝色 */
+            transform: scale(1.05); /* 放大效果 */
         }
         .container {
             display: flex;
             flex-wrap: wrap;
             padding: 20px;
+            max-width: 1200px; /* 限制最大宽度 */
+            margin: 0 auto; /* 居中 */
         }
         .sidebar {
             flex: 1;
-            margin-right: 20px;
-            background: #e9ecef; /* 侧边栏柔和背景色 */
-            padding: 20px;
-            border-radius: 5px; /* 圆角边框 */
+            margin-right: 30px;
+            background: #bdc3c7; /* 柔和的灰色侧边栏背景 */
+            padding: 25px;
+            border-radius: 10px; /* 更大的圆角 */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 添加阴影 */
+        }
+        .sidebar a {
+            text-decoration: none;
+            color: #2c3e50;
+        }
+        .sidebar a:hover {
+            color: #e74c3c; /* 鼠标悬停时变为红色 */
+            text-decoration: underline;
+        }
+        .sidebar .external-link::after {
+            content: ' ➔';
+            color: #e74c3c; /* 红色图标 */
+            transition: transform 0.3s ease; /* 图标过渡效果 */
+        }
+        .sidebar .external-link:hover::after {
+            transform: translateX(5px); /* 图标向右移动 */
         }
         .content {
             flex: 3;
         }
-        .post {
-            border-bottom: 1px solid #ddd;
-            padding: 20px 0;
+        .post, .post-full {
+            border-bottom: 1px solid #bdc3c7; /* 侧边栏背景色作为分隔线 */
+            padding: 25px 0;
         }
         .post h2, .post-full h2 {
             margin-top: 0;
+            color: #2980b9; /* 鲜艳的蓝色标题 */
         }
         .post-full {
-            background: #fff; /* 文章详情页白色背景 */
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 轻微阴影效果，增加立体感 */
-            border-radius: 5px; /* 圆角边框 */
+            background: #fff;
+            padding: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 更深的阴影 */
+            border-radius: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* 平滑的过渡效果 */
+        }
+        .post-full:hover {
+            transform: translateY(-5px); /* 悬停时向上移动 */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* 更深的阴影 */
         }
         @keyframes scrollIn {
             0% {
@@ -86,8 +102,8 @@
                 opacity: 1;
             }
         }
-        .post-full h2, .post h2 {
-            animation: scrollIn 0.5s ease-in-out; /* 应用滚动进入动画 */
+        .post-full h2 {
+            animation: scrollIn 0.6s ease-in-out;
         }
         .post-full:nth-child(2) h2 {
             animation-delay: 0.1s;
@@ -95,15 +111,15 @@
         .post-full:nth-child(3) h2 {
             animation-delay: 0.2s;
         }
-        /* 如果需要为更多文章标题添加延迟，可以继续添加规则 */
         footer {
-            background: #343a40; /* 深灰色页脚背景 */
-            color: #fff;
+            background: #2c3e50;
+            color: #ecf0f1;
             text-align: center;
-            padding: 10px 0;
+            padding: 15px 0;
             position: fixed;
             width: 100%;
             bottom: 0;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* 顶部阴影 */
         }
         /* 占位内容样式（不需要实际样式，仅用于增加行数） */
         .placeholder {
@@ -112,29 +128,28 @@
     </style>
 </head>
 <body>
-
+ 
 <header>
-    <h1>欢迎来到我的空间</h1>
+    <h1>欢迎莅临我的璀璨空间</h1>
 </header>
-
+ 
 <nav>
-    <a href="#home">主页</a>
+    <a href="#home" target="_self">主页</a>
 </nav>
-
+ 
 <div class="container">
     <div class="sidebar">
         <h2>关于我</h2>
-        <p>我是一个热爱编程和写作的人。这个博客是我分享知识和经验的地方。</p>
+        <p>我是一位热衷于编程与文学创作的探索者。这个博客是我分享智慧与感悟的璀璨殿堂。</p>
         
-        <h2>我的最新文章</h2>
+        <h2>我的璀璨文章</h2>
         <ul>
-            <li><a href="https://www.zhihu.com/people/andy-71-39-92">我的知乎</a></li>
-            <li><a href="#post2">Bilibili</a></li>
-            <li><a href="https://blog.csdn.net/2203_76061586?spm=1010.2135.3001.5343">CSDN</a></li>
-            <!-- 可以添加更多文章链接 -->
+            <li><a href="https://www.zhihu.com/people/andy-71-39-92" class="external-link" target="_blank">知乎之旅 ➔</a></li>
+            <li><a href="#post2" target="_self">Bilibili探索（示例链接，请替换为真实文章）</a></li>
+            <li><a href="https://blog.csdn.net/2203_76061586?spm=1010.2135.3001.5343" class="external-link" target="_blank">CSDN笔记 ➔</a></li>
+            <!-- 可添加更多璀璨文章链接 -->
         </ul>
     </div>
-
     <div class="content">
         <div id="home" class="post">
             <h2>主页</h2>
@@ -148,27 +163,30 @@
             <p>我们的体制总倾向于用一个量化的分数来概括衡量一个人。这一体制在高考中登峰造极。在大学里，我们也会面临无数定量的评分机制：从各科考试、综合测评、到毕业出国、读研、留沪工作……都少不了和分数打交道。面对这些分数，我们必须保持头脑清醒：</p>
             <p>如果一个人把政策评分作为自己的至高追求，那么他就是这个政策的牺牲品。</p>
             <p>就算你把课本上的内容搞得再烂熟，绝不代表你真正对这门课能有什么理解（相反，那些真正理解的人，却不一定能针对考点答出高分）。请务必牢记：大学四年留给你的是你的人生，在你毕业之时，那一串苍白的分数其实就已经作废了。</p>
-            <P>在大学三年中,我逐渐的意识通过自身反思和身边同学观察,意识到本人所在学校教我的绝大部分专业课老师教学水平及其差劲,又看到多个社交平台大学生的吐槽让我意识到大学教育体系制度的种种问题</P>
+            
             <ol>       
             <li>教师本身缺乏实际工作项目,所授知识远远偏离实际,就比如我在学python的时候教我的老师忽然谈到了c语言,他竟然恬不知耻的大笑道,学了python我c语言都忘得差不多了,这句话让我大为震惊,一个学编程的人竟然还炫耀着自己c语言功底的缺失,这样的人怎能学好编程又怎能教好编程呢</li>
             </ol>
-            <P>文章引用自上交生存手册</P>
+			<ul>文章引用自上交生存手册</ul>
+           
             <!-- 可以添加更多内容 -->
         </div>
 
-        <div id="post2" class="post-full">
+         <div id="post2" class="post-full">
             <h2>论编程</h2>
             <p>学好编程对于普通人来说一定要下苦功夫和大量的时间</p>
-            <p>如今经常听到有些人谈论编程年龄,说35岁就下岗了,每每我听到这种话都略显无语,编程我认为是在60岁之前是越老越吃香的,在工作中不断积累经验不断学习才可以确保自己立足于不败之地,个人认为不思进取,吃老本的人才会被裁掉,后经左耳朵耗子文章所证实我的观点的合理性/p>
-            <P>文章参考于“左耳朵耗子”的《编程能力与编程年龄》</P>
+            <p>如今经常听到有些人谈论编程年龄,说35岁就下岗了,每每我听到这种话都略显无语,编程我认为是在60岁之前是越老越吃香的,在工作中不断积累经验不断学习才可以确保自己立足于不败之地,个人认为不思进取,吃老本的人才会被裁掉,后经左耳朵耗子文章所证实我的观点的合理性</p>
+            <ul>文章参考于“左耳朵耗子”的《编程能力与编程年龄》</ul>
             <!-- 可以添加更多内容 -->
         </div>
 
         <div id="post3" class="post-full">
             <h2>我和她</h2>
             <p>一个胆小而又可爱的女孩，尽管我们来自同一个学校但不同专业，我是她的学长。她有着一颗敏感而温柔的心，时常会因为一些小事情而流下眼泪。但我总是鼓励她，告诉她要坚强，要相信自己能够克服一切困难。</p>
-            <p>她很倔强，有时候会因为一些观点或决定与我产生矛盾。但正是这份倔强，让她在追求梦想的道路上从不轻言放弃。尽管我们会有争执，但每一次，我们都会用心去倾听对方的声音，去理解对方的立场。最终，我们总能找到解决问题的方法，和好如初。</p>
-            <P>我很爱她，爱她的胆小与纯真，爱她的倔强与坚持。我知道，她的眼泪背后隐藏着深深的情感，她的倔强背后是对未来的执着追求。我会一直陪伴在她身边，给予她无尽的支持与鼓励，与她共同书写属于我们的美好未来。</P>
+            <p>她很倔强，有时候会因为一些观点或决定与我产生矛盾。但正是这份倔强，让她在追求梦想的道路上从不轻言放弃。尽管我们会有争执，但每一次，我们都会用心去倾听对方的声音，去理解对方的立场。最终，我们总能找到解决问题的方法，和好如初。我很爱她，爱她的胆小与纯真，爱她的倔强与坚持。我知道，她的眼泪背后隐藏着深深的情感，她的倔强背后是对未来的执着追求。我会一直陪伴在她身边，给予她无尽的支持与鼓励，与她共同书写属于我们的美好未来。</p>
+            
+            
+            
             <!-- 可以添加更多内容 -->
         </div>
 
