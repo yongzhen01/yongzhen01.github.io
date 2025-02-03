@@ -6,7 +6,7 @@
     <title>我们的时刻记录</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
             background: linear-gradient(135deg, #00BFFF, #FF69B4, #90EE90);
@@ -27,22 +27,47 @@
             100% { background-position: 0% 50%; }
         }
 
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .navbar a {
+            text-decoration: none;
+            color: #333;
+            padding: 0 15px;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .navbar a:hover {
+            color: #ff6f61;
+        }
+
         .container {
             width: 80%;
             max-width: 1200px;
-            padding: 20px;
+            padding: 80px 20px 20px; /* Adjusted top padding to accommodate navbar */
             box-sizing: border-box;
+            text-align: center;
         }
 
         .home-button {
-            margin-bottom: 20px;
+            margin-bottom: 40px;
         }
 
         .home-button button {
             background-color: #ff6f61;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 8px;
             cursor: pointer;
             transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
@@ -53,10 +78,24 @@
             transform: translateY(-3px);
         }
 
+        .love-timer {
+            margin-bottom: 40px;
+            font-size: 2em;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .love-timer span {
+            margin-left: 10px;
+            font-size: 1.5em;
+        }
+
         .moment {
             background-color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 20px;
-            padding: 20px;
+            margin-bottom: 30px;
+            padding: 30px;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out;
@@ -72,8 +111,6 @@
             text-decoration: none;
             color: #333;
             transition: color 0.3s ease-in-out;
-            display: block;
-            padding: 10px 0;
         }
 
         .moment a:hover {
@@ -82,7 +119,7 @@
 
         .moment p {
             margin: 0;
-            font-size: 1.1em;
+            font-size: 1.2em;
         }
 
         @media (max-width: 768px) {
@@ -90,16 +127,27 @@
                 width: 90%;
             }
 
-            .moment p {
+            .love-timer {
+                font-size: 1.5em;
+            }
+
+            .love-timer span {
+                font-size: 1.2em;
+            }
+
+            .moment p, .navbar a {
                 font-size: 1em;
             }
         }
     </style>
 </head>
 <body>
+    <div class="navbar">
+        <a href="index.html">返回主页</a> <!-- 请确保这里的URL是正确的 -->
+    </div>
     <div class="container">
-        <div class="home-button">
-            <button onclick="window.location.href='index.html'">返回主页</button>
+        <div class="love-timer" id="loveTimer">
+            <div>恋爱计时器:</div> <span id="days">加载中...</span> 天
         </div>
         <div class="moment">
             <a href="https://example.com/moment1" target="_blank">
@@ -118,5 +166,22 @@
         </div>
         <!-- 可以继续添加更多的时刻 -->
     </div>
+
+    <script>
+        // 设置恋爱开始的日期
+        var startDate = new Date("2024-04-20T00:00:00"); // 请将此处替换为您的实际开始日期
+
+        // 获取当前日期
+        var currentDate = new Date();
+
+        // 计算两个日期之间的时间差（毫秒）
+        var timeDifference = currentDate - startDate;
+
+        // 将时间差转换为天数
+        var daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+        // 将天数显示在页面上
+        document.getElementById("days").innerText = daysDifference;
+    </script>
 </body>
 </html>
