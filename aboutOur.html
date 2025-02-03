@@ -9,95 +9,114 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            /* 使用动态渐变背景 */
             background: linear-gradient(135deg, #00BFFF, #FF69B4, #90EE90);
             background-size: 600% 600%;
             animation: dynamicGradient 15s ease infinite;
             color: #333;
-            overflow-x: hidden; /* 防止水平滚动条 */
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
 
         @keyframes dynamicGradient {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .container {
             width: 80%;
-            margin: 0 auto;
+            max-width: 1200px;
             padding: 20px;
-            max-width: 1200px; /* 限制最大宽度以适应大屏幕 */
+            box-sizing: border-box;
+        }
+
+        .home-button {
+            margin-bottom: 20px;
+        }
+
+        .home-button button {
+            background-color: #ff6f61;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        .home-button button:hover {
+            background-color: #ff453a;
+            transform: translateY(-3px);
         }
 
         .moment {
-            background-color: rgba(255, 255, 255, 0.9); /* 半透明白色背景 */
+            background-color: rgba(255, 255, 255, 0.9);
             margin-bottom: 20px;
             padding: 20px;
-            border-radius: 12px; /* 更大的圆角 */
+            border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out;
         }
 
         .moment:hover {
-            transform: translateY(-10px) scale(1.02); /* 向下移动并轻微放大 */
+            transform: translateY(-10px) scale(1.02);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-            background-color: rgba(255, 255, 255, 0.95); /* 稍微增加不透明度 */
+            background-color: rgba(255, 255, 255, 0.95);
         }
 
         .moment a {
             text-decoration: none;
             color: #333;
             transition: color 0.3s ease-in-out;
+            display: block;
+            padding: 10px 0;
         }
 
         .moment a:hover {
-            color: #ff6f61; /* 悬停时的链接颜色 */
+            color: #ff6f61;
         }
 
         .moment p {
             margin: 0;
             font-size: 1.1em;
-            transition: font-size 0.3s ease-in-out;
         }
 
-        .moment:hover p {
-            font-size: 1.15em; /* 悬停时略微增大字体 */
-        }
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+            }
 
-        /* 添加粒子动画背景（可选，需要外部库或SVG动画）
-        /* 这里为了简洁不添加具体实现，但可以通过CSS动画或JavaScript库实现 */
+            .moment p {
+                font-size: 1em;
+            }
+        }
     </style>
-    <!-- 如果选择添加粒子动画背景，可以在此处引入相关CSS或JavaScript文件 -->
 </head>
 <body>
     <div class="container">
-        <!-- 时刻1 -->
+        <div class="home-button">
+            <button onclick="window.location.href='/'">返回主页</button>
+        </div>
         <div class="moment">
-            <a href="#" target="_blank">
+            <a href="https://example.com/moment1" target="_blank">
                 <p>我们的第一次旅行</p>
             </a>
         </div>
-        <!-- 时刻2 -->
         <div class="moment">
-            <a href="#" target="_blank">
+            <a href="https://example.com/moment2" target="_blank">
                 <p>一起看日出</p>
             </a>
         </div>
-        <!-- 时刻3 -->
         <div class="moment">
-            <a href="#" target="_blank">
+            <a href="https://example.com/moment3" target="_blank">
                 <p>庆祝我们的纪念日</p>
             </a>
         </div>
-        <!-- 你可以继续添加更多的时刻 -->
+        <!-- 可以继续添加更多的时刻 -->
     </div>
-    <!-- 如果添加粒子动画或其他特效，可以在此处添加相关HTML结构或JavaScript代码 -->
 </body>
 </html>
