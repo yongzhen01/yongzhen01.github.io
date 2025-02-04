@@ -1,116 +1,194 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>记录生活中的我</title>
     <style>
-        /* 整合后的样式，增加了更多视觉效果 */
+        /* 全局样式 */
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
             line-height: 1.6;
-            background: #f0f4f8; /* 更为柔和的渐变背景 */
-            color: #2c3e50; /* 深邃的文字颜色 */
+            background: #f0f4f8;
+            color: #2c3e50;
         }
+
+        /* 头部样式 */
         header {
-            background: #34495e; /* 深邃的蓝色头部背景 */
+            background: #34495e;
             color: #ecf0f1;
             padding: 20px 0;
             text-align: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
+
+        /* 导航栏样式 */
         nav {
-            background: #2c3e50; /* 头部背景稍浅的蓝色 */
+            background: #2c3e50;
             text-align: center;
             padding: 10px 0;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* 添加轻微阴影 */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
+
         nav a {
             color: #ecf0f1;
             margin: 0 15px;
             text-decoration: none;
-            padding: 8px 16px; /* 更大的内边距 */
-            border-radius: 8px; /* 更大的圆角 */
-            transition: all 0.3s ease; /* 平滑的过渡效果 */
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
         }
+
         nav a:hover {
-            background: #2980b9; /* 鼠标悬停时变为鲜艳的蓝色 */
-            transform: scale(1.05); /* 放大效果 */
+            background: #2980b9;
+            transform: scale(1.05);
         }
+
+        /* 容器样式 */
         .container {
             display: flex;
             flex-wrap: wrap;
             padding: 20px;
-            max-width: 1200px; /* 限制最大宽度 */
-            margin: 0 auto; /* 居中 */
+            max-width: 1200px;
+            margin: 0 auto;
         }
+
+        /* 侧边栏样式 */
         .sidebar {
             flex: 1;
             margin-right: 30px;
-            background: #bdc3c7; /* 柔和的灰色侧边栏背景 */
+            background: #bdc3c7;
             padding: 25px;
-            border-radius: 10px; /* 更大的圆角 */
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 添加阴影 */
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
+
         .sidebar a {
             text-decoration: none;
             color: #2c3e50;
         }
+
         .sidebar a:hover {
-            color: #e74c3c; /* 鼠标悬停时变为红色 */
+            color: #e74c3c;
             text-decoration: underline;
         }
-        .sidebar .external-link::after {
+
+        .external-link {
+            position: relative;
+        }
+
+        .external-link::after {
             content: ' ➔';
-            color: #e74c3c; /* 红色图标 */
-            transition: transform 0.3s ease; /* 图标过渡效果 */
+            color: #e74c3c;
+            transition: transform 0.3s ease;
+            position: absolute;
+            right: -15px;
         }
-        .sidebar .external-link:hover::after {
-            transform: translateX(5px); /* 图标向右移动 */
+
+        .external-link:hover::after {
+            transform: translateX(5px);
         }
+
+        /* 菜单按钮样式 */
+        .menu-toggle {
+            display: block;
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            background: #2980b9;
+        }
+
+        /* 菜单列表样式 */
+        .menu-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+
+        .menu-list li {
+            padding: 10px;
+            background: #bdc3c7;
+            border-bottom: 1px solid #fff;
+        }
+
+        .menu-list li a {
+            color: #2c3e50;
+            text-decoration: none;
+        }
+
+        .menu-list li a:hover {
+            color: #e74c3c;
+            text-decoration: underline;
+        }
+
+        /* 内容区域样式 */
         .content {
             flex: 3;
         }
-        .post, .post-full {
-            border-bottom: 1px solid #bdc3c7; /* 侧边栏背景色作为分隔线 */
+
+        .post,
+        .post-full {
+            border-bottom: 1px solid #bdc3c7;
             padding: 25px 0;
         }
-        .post h2, .post-full h2 {
+
+        .post h2,
+        .post-full h2 {
             margin-top: 0;
-            color: #2980b9; /* 鲜艳的蓝色标题 */
+            color: #2980b9;
         }
+
         .post-full {
             background: #fff;
             padding: 30px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 更深的阴影 */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease; /* 平滑的过渡效果 */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+
         .post-full:hover {
-            transform: translateY(-5px); /* 悬停时向上移动 */
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* 更深的阴影 */
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
         }
+
+        /* 标题动画 */
         @keyframes scrollIn {
             0% {
                 transform: translateY(20px);
                 opacity: 0;
             }
+
             100% {
                 transform: translateY(0);
                 opacity: 1;
             }
         }
+
         .post-full h2 {
             animation: scrollIn 0.6s ease-in-out;
         }
+
         .post-full:nth-child(2) h2 {
             animation-delay: 0.1s;
         }
+
         .post-full:nth-child(3) h2 {
             animation-delay: 0.2s;
         }
+
+        /* 页脚样式 */
         footer {
             background: #2c3e50;
             color: #ecf0f1;
@@ -119,44 +197,47 @@
             position: fixed;
             width: 100%;
             bottom: 0;
-            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* 顶部阴影 */
-        }
-        /* 占位内容样式（不需要实际样式，仅用于增加行数） */
-        .placeholder {
-            display: none;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
-<body>
- 
-<header>
-    <h1>欢迎来到这里</h1>
-</header>
- 
-<nav>
-    <a href="#home" target="_self">主页</a>
-</nav>
- 
-<div class="container">
-    <div class="sidebar">
-        <h2>关于我</h2>
-        <p>我是一位热衷于编程与文学创作的探索者。这个博客是我分享智慧与感悟的璀璨殿堂。</p>
-        
-        <h2>我的文章</h2>
-        <ul>
-            <li><a href="https://www.zhihu.com/people/andy-71-39-92" class="external-link" target="_blank">知乎之旅 </a></li>
-            <li><a href="aboutOur.html" class="external-link" target="_blank">我们的时刻 </a></li>
-            <li><a href="https://blog.csdn.net/2203_76061586?spm=1010.2135.3001.5343" class="external-link" target="_blank">CSDN笔记 </a></li>
-            <!-- 可添加更多璀璨文章链接 -->
-        </ul>
-    </div>
-    <div class="content">
-        <div id="home" class="post">
-            <h2>主页</h2>
-            <p>欢迎来到我的博客主页。这里是我分享编程和写作心得的地方。</p>
-        </div>
 
-        <div id="post1" class="post-full">
+<body>
+    <!-- 头部区域 -->
+    <header>
+        <h1>欢迎来到这里</h1>
+    </header>
+
+    <!-- 导航栏 -->
+    <nav>
+        <a href="#home" target="_self" title="返回主页">主页</a>
+    </nav>
+
+    <!-- 主要内容容器 -->
+    <div class="container">
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <h2>关于我</h2>
+            <p>我是一位热衷于编程与文学创作的探索者。这个博客是我分享智慧与感悟的璀璨殿堂。</p>
+
+            <div class="menu-toggle">我的文章</div>
+            <ul class="menu-list">
+                <li><a href="https://www.zhihu.com/people/andy-71-39-92" class="external-link" target="_blank"
+                        title="查看知乎文章">知乎之旅 </a></li>
+                <li><a href="aboutOur.html" class="external-link" target="_blank" title="查看我们的时刻文章">我们的时刻 </a></li>
+                <li><a href="https://blog.csdn.net/2203_76061586?spm=1010.2135.3001.5343" class="external-link"
+                        target="_blank" title="查看CSDN笔记文章">CSDN笔记 </a></li>
+                <!-- 可添加更多璀璨文章链接 -->
+            </ul>
+        </div>
+        <!-- 内容区域 -->
+        <div class="content">
+            <div id="home" class="post">
+                <h2>主页</h2>
+                <p>欢迎来到我的博客主页。这里是我分享编程和写作心得的地方。</p>
+            </div>
+
+        	<div id="post1" class="post-full">
             <h2>谈大学生存</h2>
             <p>各位同学们，我不得不遗憾地告诉大家一个消息。国内绝大部分大学的本科教学，不是濒临崩溃，而是早已崩溃。</p>
             <p>在当今流水线式的教育体制下，我们就像廉价的零件一样被生产出来。因为数量巨大，没人会对每一个人的教学质量负责。</p>
@@ -170,17 +251,17 @@
 			<ul>文章引用自上交生存手册</ul>
            
             <!-- 可以添加更多内容 -->
-        </div>
+        	</div>
 
-         <div id="post2" class="post-full">
+        	<div id="post2" class="post-full">
             <h2>论编程</h2>
             <p>学好编程对于普通人来说一定要下苦功夫和大量的时间</p>
             <p>如今经常听到有些人谈论编程年龄,说35岁就下岗了,每每我听到这种话都略显无语,编程我认为是在60岁之前是越老越吃香的,在工作中不断积累经验不断学习才可以确保自己立足于不败之地,个人认为不思进取,吃老本的人才会被裁掉,后经左耳朵耗子文章所证实我的观点的合理性</p>
             <ul>文章参考于“左耳朵耗子”的《编程能力与编程年龄》</ul>
             <!-- 可以添加更多内容 -->
-        </div>
+        	</div>
 
-        <div id="post3" class="post-full">
+        	<div id="post3" class="post-full">
             <h2>我和她</h2>
             <p>一个胆小而又可爱的女孩，尽管我们来自同一个学校但不同专业，我是她的学长。她有着一颗敏感而温柔的心，时常会因为一些小事情而流下眼泪。但我总是鼓励她，告诉她要坚强，要相信自己能够克服一切困难。</p>
             <p>她很倔强，有时候会因为一些观点或决定与我产生矛盾。但正是这份倔强，让她在追求梦想的道路上从不轻言放弃。尽管我们会有争执，但每一次，我们都会用心去倾听对方的声音，去理解对方的立场。最终，我们总能找到解决问题的方法，和好如初。我很爱她，爱她的胆小与纯真，爱她的倔强与坚持。我知道，她的眼泪背后隐藏着深深的情感，她的倔强背后是对未来的执着追求。我会一直陪伴在她身边，给予她无尽的支持与鼓励，与她共同书写属于我们的美好未来。</p>
@@ -189,23 +270,27 @@
             
             
             <!-- 可以添加更多内容 -->
+      	 	</div>
         </div>
-
-        <!-- 可以添加更多文章，但为了增加行数，我们添加占位内容 -->
-        <div class="placeholder"><p>占位内容1。</p></div>
-        <div class="placeholder"><p>占位内容2。</p></div>
-        <!-- ... 重复添加占位内容多次，直到代码行数接近400行 ... -->
-
     </div>
-</div>
 
-<footer>
-    <p>&copy; 2025 记录美好生活. 保留所有权利.</p>
-</footer>
+    <!-- 页脚 -->
+    <footer>
+        <p>&copy; 2025 记录美好生活. 保留所有权利.</p>
+    </footer>
 
-<!-- 占位内容，用于增加代码行数 -->
-<div class="placeholder"><p>占位内容N。</p></div>
-<!-- ... 继续添加直到满足400行要求 ... -->
+    <script>
+        const menuToggle = document.querySelector('.menu-toggle');
+        const menuList = document.querySelector('.menu-list');
 
+        menuToggle.addEventListener('click', function () {
+            if (menuList.style.maxHeight) {
+                menuList.style.maxHeight = null;
+            } else {
+                menuList.style.maxHeight = menuList.scrollHeight + 'px';
+            }
+        });
+    </script>
 </body>
+
 </html>
