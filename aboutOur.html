@@ -1,200 +1,420 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>阅读器</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            overflow: hidden;
-            transition: background 2s ease;
-            background: linear-gradient(to right, #7CFC00, #7CFC00);
-        }
-
-        .container {
-            display: flex;
-            height: 100vh;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-top: 50px; /* Adjust this value if the header covers important content */
-        }
-
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 10px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            z-index: 1000; /* Ensure it stays above other content */
-        }
-
-        .header a {
-            text-decoration: none;
-            color: #333;
-            font-weight: bold;
-        }
-
-        .left-column, .right-column {
-            padding: 20px;
-            box-sizing: border-box;
-            overflow-y: auto;
-        }
-
-        .left-column {
-            width: 30%;
-            border-right: 1px solid #ddd;
-        }
-
-        .left-column ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        .left-column li {
-            padding: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .left-column li:hover {
-            background-color: #f0f0f0;
-        }
-
-        .right-column {
-            width: 70%;
-            padding-left: 40px;
-        }
-
-        .content {
-            display: none;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        .content.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        /* 恋爱计时器样式 */
-        .timer {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 150px;
-            height: 150px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 50%;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-            animation: float 3s ease-in-out infinite;
-            color: #333;
-            font-size: 16px;
-        }
-
-        .timer .days {
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-    </style>
-</head>
-<body>
-    
-    <!-- 添加返回主页链接 -->
-    <div class="header">
-        <a href="index.html">返回主页</a>
-    </div>
-
-    <div class="container">
-        <div class="left-column">
-            <ul>
-                <li onclick="showContent('moment1', 'linear-gradient(to right, #87CEEB, #FFD700, #FF69B4)')">2024年4月20日 - 第一次表白</li>
-                <li onclick="showContent('moment2', 'linear-gradient(to right, #FF69B4, #800080, #8A2BE2)')">2024年5月20日 - 一起看电影</li>
-                <li onclick="showContent('moment3', 'linear-gradient(to right, #8A2BE2, #ADD8E6, #90EE90)')">2024年12月19日 - 她的生日</li>
-                <li onclick="showContent('moment4', 'linear-gradient(to right, #FF6347, #FFD700, #4682B4)')">2025年1月2日 - 一起过圣诞节</li>
-            </ul>
-        </div>
-        <div class="right-column">
-            <div id="moment1" class="content active">
-                <h2>2024年4月20日 - 第一次表白</h2>
-                <p>这是我们第一次正是表白，感觉非常紧张又兴奋...</p>
-            </div>
-            <div id="moment2" class="content">
-                <h2>2024年5月20日 -</h2>
-                <p>我们在校园过了第一个520,我为她准备了很大很大的玫瑰礼盒...</p>
-            </div>
-            <div id="moment3" class="content">
-                <h2>2024年12月19日 - 她的生日</h2>
-                <p>为了她的生日，我准备了一个大蛋糕...</p>
-            </div>
-            <div id="moment4" class="content">
-                <h2>2025年1月2日 - 一起看电影 </h2>
-                <p>这次我们选择了一部悬疑推理篇，看电影的过程中她全神贯注...</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- 添加恋爱计时器 -->
-    <div class="timer" id="loveTimer">
-        <div>相恋</div>
-        <div class="days" id="timerDays">0</div>
-        <div>天</div>
-    </div>
-
-    <script>
-        function showContent(id, gradient) {
-            var contents = document.querySelectorAll('.content');
-            contents.forEach(function(content) {
-                content.classList.remove('active');
-            });
-            var selectedContent = document.getElementById(id);
-            selectedContent.classList.add('active');
-            document.body.style.background = gradient;
-        }
-
-        function updateLoveTimer() {
-            var startDate = new Date('2024-04-20'); // 请根据实际情况修改日期
-            var today = new Date();
-            var millisecondsPerDay = 1000 * 60 * 60 * 24;
-            var diffInMilliseconds = today - startDate;
-            var diffInDays = Math.floor(diffInMilliseconds / millisecondsPerDay);
-
-            var timerDaysElement = document.getElementById('timerDays');
-            timerDaysElement.textContent = diffInDays;
-        }
-
-        // 初始化恋爱计时器
-        updateLoveTimer();
-        // 每秒更新一次恋爱计时器
-        setInterval(updateLoveTimer, 1000);
-    </script>
-</body>
-</html>
+<!DOCTYPE html> 
+<html lang="zh-CN"> 
+ 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>恋爱记录</title> 
+    <style> 
+        body { 
+            font-family: Arial, sans-serif; 
+            display: flex; 
+            flex-direction: row; 
+            margin: 0; 
+            padding: 0; 
+            min-height: 100vh; 
+            overflow: hidden; 
+            transition: background 2s ease; 
+            background: linear-gradient(to right, #7CFC00, #7CFC00); 
+        } 
+ 
+      .sidebar { 
+            position: fixed; 
+            left: 0; 
+            top: 0; 
+            height: 100vh; 
+            width: 200px; 
+            background-color: rgba(255, 255, 255, 0.9); 
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+            z-index: 1000; 
+            padding: 10px; 
+        } 
+ 
+      .sidebar a { 
+            display: block; 
+            text-decoration: none; 
+            color: #333; 
+            font-weight: bold; 
+            padding: 10px; 
+            margin-bottom: 5px; 
+            border-radius: 5px; 
+            transition: background-color 0.3s ease; 
+        } 
+ 
+      .sidebar a:hover { 
+            background-color: #f0f0f0; 
+        } 
+ 
+      .main-container { 
+            flex: 1; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding-left: 200px; 
+        } 
+ 
+      .container { 
+            display: flex; 
+            width: 80%; 
+            max-width: 1200px; 
+            height: auto; 
+            background: rgba(255, 255, 255, 0.8); 
+            border-radius: 10px; 
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+        } 
+ 
+      .left-column,.right-column { 
+            padding: 20px; 
+            box-sizing: border-box; 
+            overflow-y: auto; 
+        } 
+ 
+      .left-column { 
+            width: 30%; 
+            border-right: 1px solid #ddd; 
+        } 
+ 
+      .left-column ul { 
+            list-style-type: none; 
+            padding: 0; 
+        } 
+ 
+      .left-column li { 
+            padding: 10px; 
+            cursor: pointer; 
+            transition: background-color 0.3s ease, transform 0.2s ease; 
+        } 
+ 
+      .left-column li:hover { 
+            background-color: #f0f0f0; 
+            transform: scale(1.05); 
+        } 
+ 
+      .right-column { 
+            width: 70%; 
+            padding-left: 40px; 
+        } 
+ 
+      .content { 
+            display: none; 
+            animation: fadeIn 0.5s ease-in-out; 
+        } 
+ 
+      .content.active  { 
+            display: block; 
+        } 
+ 
+        @keyframes fadeIn { 
+            from { 
+                opacity: 0; 
+                transform: translateY(10px); 
+            } 
+ 
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            } 
+        } 
+ 
+      .timer { 
+            position: fixed; 
+            bottom: 10px; 
+            left: 10px; 
+            width: 100px; 
+            height: 100px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            background: rgba(255, 255, 255, 0.9); 
+            border-radius: 50%; 
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); 
+            animation: float 3s ease-in-out infinite; 
+            color: #333; 
+            font-size: 16px; 
+        } 
+ 
+      .timer.dragging  { 
+            animation-play-state: paused; 
+        } 
+ 
+      .timer.dragging:hover  { 
+            transform: translateY(0); 
+        } 
+ 
+      .timer.days  { 
+            font-size: 24px; 
+            font-weight: bold; 
+        } 
+ 
+        @keyframes float { 
+            0%, 
+            100% { 
+                transform: translateY(0); 
+            } 
+ 
+            50% { 
+                transform: translateY(-10px); 
+            } 
+        } 
+ 
+        /* 日历样式 */ 
+      .calendar { 
+            position: fixed; 
+            top: 10px; 
+            right: 10px; 
+            background-color: rgba(255, 255, 255, 0.9); 
+            border-radius: 5px; 
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+            padding: 10px; 
+            display: none; 
+            z-index: 1001; 
+            /* 添加过渡效果 */ 
+            transition: opacity 0.3s ease, transform 0.3s ease; 
+            opacity: 0; 
+            transform: scale(0.8); 
+        } 
+ 
+      .calendar.show  { 
+            opacity: 1; 
+            transform: scale(1); 
+        } 
+ 
+      .calendar table { 
+            border-collapse: collapse; 
+        } 
+ 
+      .calendar th, 
+      .calendar td { 
+            border: 1px solid #ddd; 
+            padding: 5px; 
+            text-align: center; 
+        } 
+ 
+      .current-date { 
+            background-color: #00BFFF; 
+            color: white; 
+        } 
+ 
+      .anniversary { 
+            background-color: #FF5733; 
+            color: white; 
+        } 
+ 
+      .special-date { 
+            background-color: #800080; 
+            color: white; 
+        } 
+ 
+        /* 响应式布局 */ 
+        @media (max-width: 768px) { 
+          .container { 
+                flex-direction: column; 
+                width: 90%; 
+            } 
+ 
+          .left-column { 
+                width: 100%; 
+                border-right: none; 
+                border-bottom: 1px solid #ddd; 
+            } 
+ 
+          .right-column { 
+                width: 100%; 
+                padding-left: 20px; 
+            } 
+ 
+          .sidebar { 
+                width: 100%; 
+                height: auto; 
+                position: relative; 
+                padding: 5px; 
+            } 
+ 
+          .main-container { 
+                padding-left: 0; 
+            } 
+        } 
+    </style> 
+</head> 
+ 
+<body> 
+    <div class="sidebar"> 
+        <a href="#">返回主页</a> 
+        <div class="timer" draggable="true" ondragstart="drag(event)"> 
+            <span class="days" id="timerDays">0</span> 
+            <span>天</span> 
+        </div> 
+        <a href="#" id="showCalendarLink">显示日历</a> 
+    </div> 
+    <div class="main-container"> 
+        <div class="container"> 
+            <div class="left-column"> 
+                <ul> 
+                    <li onclick="showContent('first-confession', 'linear-gradient(to right, #FFB6C1, #FFB6C1)')">2024年4月20日 - 第一次表白</li> 
+                    <li onclick="showContent('watch-movie', 'linear-gradient(to right, #ADD8E6, #ADD8E6)')">2024年5月20日 - 一起看电影</li> 
+                    <li onclick="showContent('her-birthday', 'linear-gradient(to right, #FFD700, #FFD700)')">2024年12月19日 - 她的生日</li> 
+                    <li onclick="showContent('christmas', 'linear-gradient(to right, #00BFFF, #00BFFF)')">2025年1月2日 - 一起过圣诞节</li> 
+                </ul> 
+            </div> 
+            <div class="right-column"> 
+                <div id="first-confession" class="content"> 
+                    <h2>2024年4月20日 - 第一次表白</h2> 
+                    <p>这是我们第一次正式表白，感觉非常紧张又兴奋...</p> 
+                </div> 
+                <div id="watch-movie" class="content"> 
+                    <h2>2024年5月20日 - 一起看电影</h2> 
+                    <p>我们在校园过了第一个520，我为她准备了很大很大的玫瑰礼盒...</p> 
+                </div> 
+                <div id="her-birthday" class="content"> 
+                    <h2>2024年12月19日 - 她的生日</h2> 
+                    <p>为了她的生日，我准备了一个大蛋糕...</p> 
+                </div> 
+                <div id="christmas" class="content"> 
+                    <h2>2025年1月2日 - 一起过圣诞节</h2> 
+                    <p>这次我们选择了一部悬疑推理片，看电影的过程中她全神贯注...</p> 
+                </div> 
+            </div> 
+        </div> 
+    </div> 
+    <div class="calendar" id="calendar"> 
+        <table> 
+            <thead> 
+                <tr> 
+                    <th>日</th> 
+                    <th>一</th> 
+                    <th>二</th> 
+                    <th>三</th> 
+                    <th>四</th> 
+                    <th>五</th> 
+                    <th>六</th> 
+                </tr> 
+            </thead> 
+            <tbody id="calendarBody"></tbody> 
+        </table> 
+    </div> 
+    <script> 
+        let isDragging = false; 
+        let initialX, initialY; 
+ 
+        function drag(event) { 
+            isDragging = true; 
+            initialX = event.clientX;  
+            initialY = event.clientY;  
+            event.target.classList.add('dragging');  
+        } 
+ 
+        document.addEventListener('mousemove',  (event) => { 
+            if (isDragging) { 
+                const dx = event.clientX  - initialX; 
+                const dy = event.clientY  - initialY; 
+                const timer = document.querySelector('.timer');  
+                timer.style.transform  = `translate(${dx}px, ${dy}px)`; 
+            } 
+        }); 
+ 
+        document.addEventListener('mouseup',  () => { 
+            isDragging = false; 
+            const timer = document.querySelector('.timer');  
+            timer.classList.remove('dragging');  
+            timer.style.transform  = 'translate(0, 0)'; 
+        }); 
+ 
+        function showContent(id, gradient) { 
+            var contents = document.querySelectorAll('.content');  
+            contents.forEach(function  (content) { 
+                content.classList.remove('active');  
+            }); 
+            var selectedContent = document.getElementById(id);  
+            selectedContent.classList.add('active');  
+            document.body.style.background  = gradient; 
+        } 
+ 
+        function updateLoveTimer() { 
+            var startDate = new Date('2024-04-20'); 
+            var today = new Date(); 
+            var millisecondsPerDay = 1000 * 60 * 60 * 24; 
+            var diffInMilliseconds = today - startDate; 
+            var diffInDays = Math.floor(diffInMilliseconds  / millisecondsPerDay); 
+ 
+            var timerDaysElement = document.getElementById('timerDays');  
+            timerDaysElement.textContent  = diffInDays; 
+        } 
+ 
+        function showCalendar() { 
+            const calendar = document.getElementById('calendar');  
+            // 生成日历内容 
+            const today = new Date(); 
+            const year = today.getFullYear();  
+            const month = today.getMonth();  
+            const firstDay = new Date(year, month, 1); 
+            const lastDay = new Date(year, month + 1, 0); 
+            const firstDayOfWeek = firstDay.getDay();  
+            const lastDate = lastDay.getDate();  
+            const calendarBody = document.getElementById('calendarBody');  
+            calendarBody.innerHTML  = ''; 
+            let day = 1; 
+            for (let i = 0; i < 6; i++) { 
+                const row = document.createElement('tr');  
+                for (let j = 0; j < 7; j++) { 
+                    const cell = document.createElement('td');  
+                    if (i === 0 && j < firstDayOfWeek) { 
+                        cell.textContent  = ''; 
+                    } else if (day <= lastDate) { 
+                        cell.textContent  = day; 
+                        // 标注当前日期 
+                        const isCurrentDate = day === today.getDate()  && month === today.getMonth()  && year === today.getFullYear();  
+                        // 标注纪念日 
+                        const isAnniversary = day === new Date('2024-04-20').getDate() && month === new Date('2024-04-20').getMonth() && year === new Date('2024-04-20').getFullYear(); 
+ 
+                        if (isCurrentDate && isAnniversary) { 
+                            cell.classList.add('special-date');  
+                        } else if (isCurrentDate) { 
+                            cell.classList.add('current-date');  
+                        } else if (isAnniversary) { 
+                            cell.classList.add('anniversary');  
+                            cell.title  = '第一次表白'; 
+                        } 
+                        day++; 
+                    } else { 
+                        cell.textContent  = ''; 
+                    } 
+                    row.appendChild(cell);  
+                } 
+                calendarBody.appendChild(row);  
+            } 
+            // 显示日历并添加动画类 
+            calendar.style.display  = 'block'; 
+            calendar.classList.add('show');  
+        } 
+ 
+        function hideCalendar() { 
+            const calendar = document.getElementById('calendar');  
+            // 移除动画类 
+            calendar.classList.remove('show');  
+            // 隐藏日历 
+            setTimeout(() => { 
+                calendar.style.display  = 'none'; 
+            }, 300); 
+        } 
+ 
+        document.addEventListener('DOMContentLoaded',  function () { 
+            // 初始化恋爱计时器 
+            updateLoveTimer(); 
+            // 每秒更新一次恋爱计时器 
+            setInterval(updateLoveTimer, 1000); 
+ 
+            const showCalendarLink = document.getElementById('showCalendarLink');  
+            showCalendarLink.onclick  = function () { 
+                if (document.getElementById('calendar').style.display  === 'none') { 
+                    showCalendar(); 
+                } else { 
+                    hideCalendar(); 
+                } 
+                return false; 
+            }; 
+        }); 
+    </script> 
+</body> 
+ 
+</html> 
