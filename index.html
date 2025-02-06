@@ -1,296 +1,363 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>记录生活中的我</title>
-    <style>
-        /* 全局样式 */
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
-            background: #f0f4f8;
-            color: #2c3e50;
-        }
-
-        /* 头部样式 */
-        header {
-            background: #34495e;
-            color: #ecf0f1;
-            padding: 20px 0;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        /* 导航栏样式 */
-        nav {
-            background: #2c3e50;
-            text-align: center;
-            padding: 10px 0;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        nav a {
-            color: #ecf0f1;
-            margin: 0 15px;
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        nav a:hover {
-            background: #2980b9;
-            transform: scale(1.05);
-        }
-
-        /* 容器样式 */
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* 侧边栏样式 */
-        .sidebar {
-            flex: 1;
-            margin-right: 30px;
-            background: #bdc3c7;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar a {
-            text-decoration: none;
-            color: #2c3e50;
-        }
-
-        .sidebar a:hover {
-            color: #e74c3c;
-            text-decoration: underline;
-        }
-
-        .external-link {
-            position: relative;
-        }
-
-        .external-link::after {
-            content: ' ➔';
-            color: #e74c3c;
-            transition: transform 0.3s ease;
-            position: absolute;
-            right: -15px;
-        }
-
-        .external-link:hover::after {
-            transform: translateX(5px);
-        }
-
-        /* 菜单按钮样式 */
-        .menu-toggle {
-            display: block;
-            background: #2c3e50;
-            color: #ecf0f1;
-            padding: 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .menu-toggle:hover {
-            background: #2980b9;
-        }
-
-        /* 菜单列表样式 */
-        .menu-list {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-in-out;
-        }
-
-        .menu-list li {
-            padding: 10px;
-            background: #bdc3c7;
-            border-bottom: 1px solid #fff;
-        }
-
-        .menu-list li a {
-            color: #2c3e50;
-            text-decoration: none;
-        }
-
-        .menu-list li a:hover {
-            color: #e74c3c;
-            text-decoration: underline;
-        }
-
-        /* 内容区域样式 */
-        .content {
-            flex: 3;
-        }
-
-        .post,
-        .post-full {
-            border-bottom: 1px solid #bdc3c7;
-            padding: 25px 0;
-        }
-
-        .post h2,
-        .post-full h2 {
-            margin-top: 0;
-            color: #2980b9;
-        }
-
-        .post-full {
-            background: #fff;
-            padding: 30px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .post-full:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        /* 标题动画 */
-        @keyframes scrollIn {
-            0% {
-                transform: translateY(20px);
-                opacity: 0;
-            }
-
-            100% {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .post-full h2 {
-            animation: scrollIn 0.6s ease-in-out;
-        }
-
-        .post-full:nth-child(2) h2 {
-            animation-delay: 0.1s;
-        }
-
-        .post-full:nth-child(3) h2 {
-            animation-delay: 0.2s;
-        }
-
-        /* 页脚样式 */
-        footer {
-            background: #2c3e50;
-            color: #ecf0f1;
-            text-align: center;
-            padding: 15px 0;
-            position: fixed;
-            width: 100%;
-            bottom: 0;
-            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-        }
-    </style>
-</head>
-
-<body>
-    <!-- 头部区域 -->
-    <header>
-        <h1>欢迎来到这里</h1>
-    </header>
-
-    <!-- 导航栏 -->
-    <nav>
-        <a href="#home" target="_self" title="返回主页">主页</a>
-    </nav>
-
-    <!-- 主要内容容器 -->
-    <div class="container">
-        <!-- 侧边栏 -->
-        <div class="sidebar">
-            <h2>关于我</h2>
-            <p>我是一位热衷于编程与文学创作的探索者。这个博客是我分享智慧与感悟的璀璨殿堂。</p>
-
-            <div class="menu-toggle">我的文章</div>
-            <ul class="menu-list">
-                <li><a href="https://www.zhihu.com/people/andy-71-39-92" class="external-link" target="_blank"
-                        title="查看知乎文章">知乎之旅 </a></li>
-                <li><a href="aboutOur.html" class="external-link" target="_blank" title="查看我们的时刻文章">我们的时刻 </a></li>
-                <li><a href="https://blog.csdn.net/2203_76061586?spm=1010.2135.3001.5343" class="external-link"
-                        target="_blank" title="查看CSDN笔记文章">CSDN笔记 </a></li>
-                <!-- 可添加更多璀璨文章链接 -->
-            </ul>
-        </div>
-        <!-- 内容区域 -->
-        <div class="content">
-            <div id="home" class="post">
-                <h2>主页</h2>
-                <p>欢迎来到我的博客主页。这里是我分享编程和写作心得的地方。</p>
-            </div>
-
-        	<div id="post1" class="post-full">
-            <h2>谈大学生存</h2>
-            <p>各位同学们，我不得不遗憾地告诉大家一个消息。国内绝大部分大学的本科教学，不是濒临崩溃，而是早已崩溃。</p>
-            <p>在当今流水线式的教育体制下，我们就像廉价的零件一样被生产出来。因为数量巨大，没人会对每一个人的教学质量负责。</p>
-            <p>我们的体制总倾向于用一个量化的分数来概括衡量一个人。这一体制在高考中登峰造极。在大学里，我们也会面临无数定量的评分机制：从各科考试、综合测评、到毕业出国、读研、留沪工作……都少不了和分数打交道。面对这些分数，我们必须保持头脑清醒：</p>
-            <p>如果一个人把政策评分作为自己的至高追求，那么他就是这个政策的牺牲品。</p>
-            <p>就算你把课本上的内容搞得再烂熟，绝不代表你真正对这门课能有什么理解（相反，那些真正理解的人，却不一定能针对考点答出高分）。请务必牢记：大学四年留给你的是你的人生，在你毕业之时，那一串苍白的分数其实就已经作废了。</p>
-            
-            <ol>       
-            <li>教师本身缺乏实际工作项目,所授知识远远偏离实际,就比如我在学python的时候教我的老师忽然谈到了c语言,他竟然恬不知耻的大笑道,学了python我c语言都忘得差不多了,这句话让我大为震惊,一个学编程的人竟然还炫耀着自己c语言功底的缺失,这样的人怎能学好编程又怎能教好编程呢</li>
-            </ol>
-			<ul>文章引用自上交生存手册</ul>
-           
-            <!-- 可以添加更多内容 -->
-        	</div>
-
-        	<div id="post2" class="post-full">
-            <h2>论编程</h2>
-            <p>学好编程对于普通人来说一定要下苦功夫和大量的时间</p>
-            <p>如今经常听到有些人谈论编程年龄,说35岁就下岗了,每每我听到这种话都略显无语,编程我认为是在60岁之前是越老越吃香的,在工作中不断积累经验不断学习才可以确保自己立足于不败之地,个人认为不思进取,吃老本的人才会被裁掉,后经左耳朵耗子文章所证实我的观点的合理性</p>
-            <ul>文章参考于“左耳朵耗子”的《编程能力与编程年龄》</ul>
-            <!-- 可以添加更多内容 -->
-        	</div>
-
-        	<div id="post3" class="post-full">
-            <h2>我和她</h2>
-            <p>一个胆小而又可爱的女孩，尽管我们来自同一个学校但不同专业，我是她的学长。她有着一颗敏感而温柔的心，时常会因为一些小事情而流下眼泪。但我总是鼓励她，告诉她要坚强，要相信自己能够克服一切困难。</p>
-            <p>她很倔强，有时候会因为一些观点或决定与我产生矛盾。但正是这份倔强，让她在追求梦想的道路上从不轻言放弃。尽管我们会有争执，但每一次，我们都会用心去倾听对方的声音，去理解对方的立场。最终，我们总能找到解决问题的方法，和好如初。我很爱她，爱她的胆小与纯真，爱她的倔强与坚持。我知道，她的眼泪背后隐藏着深深的情感，她的倔强背后是对未来的执着追求。我会一直陪伴在她身边，给予她无尽的支持与鼓励，与她共同书写属于我们的美好未来。</p>
-            <br>
-	    <br>
-            
-            
-            <!-- 可以添加更多内容 -->
-      	 	</div>
-        </div>
-    </div>
-
-    <!-- 页脚 -->
-    <footer>
-        <p>&copy; 2025 记录美好生活. 保留所有权利.</p>
-    </footer>
-
-    <script>
-        const menuToggle = document.querySelector('.menu-toggle');
-        const menuList = document.querySelector('.menu-list');
-
-        menuToggle.addEventListener('click', function () {
-            if (menuList.style.maxHeight) {
-                menuList.style.maxHeight = null;
-            } else {
-                menuList.style.maxHeight = menuList.scrollHeight + 'px';
-            }
-        });
-    </script>
-</body>
-
-</html>
+<!DOCTYPE html> 
+<html lang="zh-CN"> 
+ 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>记录生活中的我</title> 
+    <style> 
+        /* 全局样式 */ 
+        body { 
+            font-family: 'Arial', sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            line-height: 1.6; 
+            /* 新增背景动画 */ 
+            background: url('your-background-image-url') repeat center center fixed; 
+            background-size: cover; 
+            animation: backgroundAnimation 10s linear infinite; 
+            color: #2c3e50; 
+        } 
+ 
+        /* 定义背景动画 */ 
+        @keyframes backgroundAnimation { 
+            0% { 
+                background-position: 0 0; 
+            } 
+ 
+            100% { 
+                background-position: 100% 100%; 
+            } 
+        } 
+ 
+        /* 头部样式 */ 
+        header { 
+            background: #34495e; 
+            color: #ecf0f1; 
+            padding: 20px 0; 
+            text-align: center; 
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+            animation: fadeIn 1s ease-in-out; 
+        } 
+ 
+        @keyframes fadeIn { 
+            0% { 
+                opacity: 0; 
+            } 
+ 
+            100% { 
+                opacity: 1; 
+            } 
+        } 
+ 
+        /* 导航栏样式 */ 
+        nav { 
+            background: #2c3e50; 
+            text-align: center; 
+            padding: 10px 0; 
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); 
+        } 
+ 
+        nav a { 
+            color: #ecf0f1; 
+            margin: 0 15px; 
+            text-decoration: none; 
+            padding: 8px 16px; 
+            border-radius: 8px; 
+            transition: all 0.3s ease; 
+        } 
+ 
+        nav a:hover { 
+            background: #2980b9; 
+            transform: scale(1.05) rotateY(10deg); 
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2); 
+        } 
+ 
+        /* 容器样式 */ 
+      .container { 
+            display: flex; 
+            flex-wrap: wrap; 
+            padding: 20px; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+        } 
+ 
+        /* 侧边栏样式 */ 
+      .sidebar { 
+            flex: 1; 
+            margin-right: 30px; 
+            background: #bdc3c7; 
+            padding: 25px; 
+            border-radius: 10px; 
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+        } 
+ 
+      .sidebar a { 
+            text-decoration: none; 
+            color: #2c3e50; 
+        } 
+ 
+      .sidebar a:hover { 
+            color: #e74c3c; 
+            text-decoration: underline; 
+        } 
+ 
+      .external-link { 
+            position: relative; 
+        } 
+ 
+      .external-link::after { 
+            content: ' ➔'; 
+            color: #e74c3c; 
+            transition: transform 0.3s ease; 
+            position: absolute; 
+            right: -15px; 
+        } 
+ 
+      .external-link:hover::after { 
+            transform: translateX(5px); 
+        } 
+ 
+        /* 菜单按钮样式 */ 
+      .menu-toggle { 
+            display: block; 
+            background: #2c3e50; 
+            color: #ecf0f1; 
+            padding: 10px; 
+            text-align: center; 
+            cursor: pointer; 
+            transition: background 0.3s ease; 
+        } 
+ 
+      .menu-toggle:hover { 
+            background: #2980b9; 
+        } 
+ 
+        /* 菜单列表样式 */ 
+      .menu-list { 
+            list-style-type: none; 
+            padding: 0; 
+            margin: 0; 
+            max-height: 0; 
+            overflow: hidden; 
+            transition: max-height 0.5s ease-in-out; 
+            background-color: #bdc3c7; 
+        } 
+ 
+      .menu-list li { 
+            padding: 10px; 
+            border-bottom: 1px solid #fff; 
+        } 
+ 
+      .menu-list li a { 
+            color: #2c3e50; 
+            text-decoration: none; 
+        } 
+ 
+      .menu-list li a:hover { 
+            color: #e74c3c; 
+            text-decoration: underline; 
+        } 
+ 
+        /* 内容区域样式 */ 
+      .content { 
+            flex: 3; 
+        } 
+ 
+      .post,.post-full { 
+            border-bottom: 1px solid #bdc3c7; 
+            padding: 25px 0; 
+        } 
+ 
+      .post h2,.post-full h2 { 
+            margin-top: 0; 
+            color: #2980b9; 
+        } 
+ 
+      .post-full { 
+            background: #fff; 
+            padding: 30px; 
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
+            border-radius: 10px; 
+            transition: transform 0.3s ease, box-shadow 0.3s ease; 
+            max-height: 120px; 
+            overflow: hidden; 
+            perspective: 1000px; 
+        } 
+ 
+      .post-full:hover { 
+            transform: translateY(-5px) rotateX(5deg); 
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); 
+            max-height: none; 
+        } 
+ 
+        /* 标题动画 */ 
+        @keyframes scrollIn { 
+            0% { 
+                transform: translateY(20px); 
+                opacity: 0; 
+            } 
+ 
+            100% { 
+                transform: translateY(0); 
+                opacity: 1; 
+            } 
+        } 
+ 
+      .post-full h2 { 
+            animation: scrollIn 0.6s ease-in-out; 
+        } 
+ 
+      .post-full:nth-child(2) h2 { 
+            animation-delay: 0.1s; 
+        } 
+ 
+      .post-full:nth-child(3) h2 { 
+            animation-delay: 0.2s; 
+        } 
+ 
+        /* 页脚样式 */ 
+        footer { 
+            background: #2c3e50; 
+            color: #ecf0f1; 
+            text-align: center; 
+            padding: 15px 0; 
+            position: relative; 
+            width: 100%; 
+            bottom: 0; 
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); 
+        } 
+ 
+        /* 新增鼠标互动特效 */ 
+      .sidebar:hover { 
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3); 
+            transform: scale(1.03); 
+        } 
+ 
+        /* 打字效果样式 */ 
+      .typing-effect { 
+            display: inline-block; 
+            overflow: hidden; 
+            white-space: nowrap; 
+            border-right: 2px solid #ecf0f1; 
+            /* 将打字动画的持续时间从4s调整为8s，并增加步骤数量 */ 
+            animation: typing 8s steps(40, end) infinite alternate, blink-caret 0.75s step-end infinite; 
+        } 
+ 
+        @keyframes typing { 
+            from { 
+                width: 0; 
+            } 
+ 
+            to { 
+                width: 100%; 
+            } 
+        } 
+ 
+        @keyframes blink-caret { 
+            from, 
+            to { 
+                border-color: transparent; 
+            } 
+ 
+            50% { 
+                border-color: #ecf0f1; 
+            } 
+        } 
+    </style> 
+</head> 
+ 
+<body> 
+    <!-- 头部区域 --> 
+    <header> 
+        <h1 class="typing-effect">前行的道路总有挫折,你的苦将会照亮你的路,欢迎来到我的博客,祝你一切安好。。。。。。</h1> 
+    </header> 
+    <!-- 导航栏 --> 
+    <nav> 
+        <a href="#home" target="_self" title="返回主页">主页</a> 
+    </nav> 
+    <!-- 主要内容容器 --> 
+    <div class="container"> 
+        <!-- 侧边栏 --> 
+        <div class="sidebar"> 
+            <h2>关于我</h2> 
+            <p>我是一位热衷于编程与文学创作的探索者。这个博客是我分享智慧与感悟的璀璨殿堂。</p> 
+            <div class="menu-toggle">我的文章</div> 
+            <ul class="menu-list"> 
+                <li><a href="https://www.zhihu.com/people/andy-71-39-92"   class="external-link" target="_blank" title="查看知乎文章">知乎之旅</a></li> 
+                <li><a href="aboutOur.html"   class="external-link" target="_blank" title="查看我们的时刻文章">我们的时刻</a></li> 
+                <li><a href="https://blog.csdn.net/2203_76061586?spm=1010.2135.3001.5343"   class="external-link" target="_blank" title="查看CSDN笔记文章">CSDN笔记</a></li> 
+                <!-- 可添加更多璀璨文章链接 --> 
+            </ul> 
+        </div> 
+        <!-- 内容区域 --> 
+        <div class="content"> 
+            <div id="home" class="post"> 
+                <h2>主页</h2> 
+                <p>欢迎来到我的博客主页。这里是我分享编程和写作心得的地方。</p> 
+            </div> 
+            <div id="post1" class="post-full"> 
+                <h2>谈大学生存</h2> 
+                <p>各位同学们，我不得不遗憾地告诉大家一个消息。国内绝大部分大学的本科教学……</p> 
+                <p style="display: none;">在当今流水线式的教育体制下，我们就像廉价的零件一样被生产出来。因为数量巨大，没人会对每一个人的教学质量负责。</p> 
+                <p style="display: none;">我们的体制总倾向于用一个量化的分数来概括衡量一个人。这一体制在高考中登峰造极。在大学里，我们也会面临无数定量的评分机制：从各科考试、综合测评、到毕业出国、读研、留沪工作……都少不了和分数打交道。面对这些分数，我们必须保持头脑清醒：</p> 
+                <p style="display: none;">如果一个人把政策评分作为自己的至高追求，那么他就是这个政策的牺牲品。</p> 
+                <p style="display: none;">就算你把课本上的内容搞得再烂熟，绝不代表你真正对这门课能有什么理解（相反，那些真正理解的人，却不一定能针对考点答出高分）。请务必牢记：大学四年留给你的是你的人生，在你毕业之时，那一串苍白的分数其实就已经作废了。</p> 
+                <ol style="display: none;"> 
+                    <li>教师本身缺乏实际工作项目,所授知识远远偏离实际,就比如我在学python的时候教我的老师忽然谈到了c语言,他竟然恬不知耻的大笑道,学了python我c语言都忘得差不多了,这句话让我大为震惊,一个学编程的人竟然还炫耀着自己c语言功底的缺失,这样的人怎能学好编程又怎能教好编程呢</li> 
+                </ol> 
+                <ul style="display: none;">文章引用自上交生存手册</ul> 
+            </div> 
+            <div id="post2" class="post-full"> 
+                <h2>论编程</h2> 
+                <p>学好编程对于普通人来说一定要下苦功夫和大量的时间……</p> 
+                <p style="display: none;">如今经常听到有些人谈论编程年龄,说35岁就下岗了,每每我听到这种话都略显无语,编程我认为是在60岁之前是越老越吃香的,在工作中不断积累经验不断学习才可以确保自己立足于不败之地,个人认为不思进取,吃老本的人才会被裁掉,后经左耳朵耗子文章所证实我的观点的合理性</p> 
+                <ul style="display: none;">文章参考于“左耳朵耗子”的《编程能力与编程年龄》</ul> 
+            </div> 
+            <div id="post3" class="post-full"> 
+                <h2>我和她</h2> 
+                <p>一个胆小而又可爱的女孩，尽管我们来自同一个学校但不同专业，我是她的学长……</p> 
+                <p style="display: none;">她有着一颗敏感而温柔的心，时常会因为一些小事情而流下眼泪。但我总是鼓励她，告诉她要坚强，要相信自己能够克服一切困难。</p> 
+                <p style="display: none;">她很倔强，有时候会因为一些观点或决定与我产生矛盾。但正是这份倔强，让她在追求梦想的道路上从不轻言放弃。尽管我们会有争执，但每一次，我们都会用心去倾听对方的声音，去理解对方的立场。最终，我们总能找到解决问题的方法，和好如初。我很爱她，爱她的胆小与纯真，爱她的倔强与坚持。我知道，她的眼泪背后隐藏着深深的情感，她的倔强背后是对未来的执着追求。我会一直陪伴在她身边，给予她无尽的支持与鼓励，与她共同书写属于我们的美好未来。</p> 
+            </div> 
+        </div> 
+    </div> 
+    <!-- 页脚 --> 
+    <footer> 
+        <p>&copy; 2025 记录美好生活. 保留所有权利.</p> 
+    </footer> 
+    <script> 
+        const menuToggle = document.querySelector('.menu-toggle');   
+        const menuList = document.querySelector('.menu-list');   
+        menuToggle.addEventListener('click',   function () { 
+            if (menuList.style.maxHeight)   { 
+                menuList.style.maxHeight   = null; 
+            } else { 
+                menuList.style.maxHeight   = menuList.scrollHeight   + 'px'; 
+            } 
+        }); 
+        // 鼠标悬停时显示完整内容 
+        const postFulls = document.querySelectorAll('.post-full');   
+        postFulls.forEach(postFull   => { 
+            const allParagraphs = postFull.querySelectorAll('p,   ol, ul'); 
+            allParagraphs.forEach((paragraph,   index) => { 
+                if (index > 0) { 
+                    paragraph.style.display   = 'none'; 
+                } 
+            }); 
+            postFull.addEventListener('mouseenter',   () => { 
+                allParagraphs.forEach(paragraph   => { 
+                    paragraph.style.display   = 'block'; 
+                }); 
+            }); 
+            postFull.addEventListener('mouseleave',   () => { 
+                allParagraphs.forEach((paragraph,   index) => { 
+                    if (index > 0) { 
+                        paragraph.style.display   = 'none'; 
+                    } 
+                }); 
+            }); 
+        }); 
+    </script> 
+</body> 
+</html> 
