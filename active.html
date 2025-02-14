@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>跳动的心</title>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #0a0a0a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="heartCanvas"></canvas>
+    <script>
+        // 常量定义
+        const HEART_COLOR = "#FF3366";
+        const GENERATE_FRAME = 30;
+        const HALO_BASE_NUMBER = 8000; 
+        const HALO_VARIATION_NUMBER = 10000; 
+        const FONT_STYLE = 'bold 28px 微软雅黑';
+        const TEXT = ' 代码跳动的心 永远守护你';
+        const FIREWORK_PARTICLE_NUMBER = 100; // 每个烟花的粒子数量
+        const FIREWORK_SPEED = 3; // 烟花粒子初始速度
+
+        const canvas = document.getElementById('heartCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let mouseX = canvas.width / 2;
+        let mouseY = canvas.height / 2;
+
+        const fireworks = [];
+
+        // 监听鼠标点击事件
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+            createFirework(clickX, clickY);
+        });
+
+        // 设置画布全屏
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // 心形函数
+        function heartFunction(t, shrinkRatio = 13) {
+            const x = 16 * Math.pow(Math.sin(t), 3);
+            const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+            return [
+                x * shrinkRatio * 1.2 + canvas.width / 2,
+                y * shrinkRatio + canvas.height / 2
+            ];
+        }
+
+        // 粒子扩散函数
+        function scatterInside(x, y, beta = 0.28) {
+            const ratioX = -beta * Math.log(Math.random());
+            const ratioY = -beta * Math.log(Math.random());
+            return [
+                x - ratioX * (x - canvas.width / 2),
+                y - ratioY * (y - canvas.height / 2)
+            ];
+        }
+
+        class EnhancedHeart {
+            constructor() {
+                this.generateFrame = GENERATE_FRAME;
+                this.points = new Set();
+                this.edgeDiffusion = new Set();
+                this.centerDiffusion = new Set();
+                this.allPoints = {};
+                this.build(5000); 
+                for (let frame = 0; frame < this.generateFrame; frame++) {
+                    this.calc(frame);
+                }
+            }
+
+            build(number) {
+                for (let i = 0; i < number; i++) {
+                    const t = Math.random() * 2 * Math.PI;
+                    const [x, y] = heartFunction(t);
+                    const angle = Math.random() * 2 * Math.PI;
+                    const speed = Math.random() * 0.5;
+                    const vx = Math.cos(angle) * speed;
+                    const vy = Math.sin(angle) * speed;
+                    this.points.add(JSON.stringify({ x, y, vx, vy }));
+                }
+
+                this.points.forEach(p => {
+                    const { x, y, vx, vy } = JSON.parse(p);
+                    for (let i = 0; i < 8; i++) { 
+                        const [nx, ny] = scatterInside(x, y, 0.08);
+                        const newVx = vx + (Math.random() - 0.5) * 0.1;
+                        const newVy = vy + (Math.random() - 0.5) * 0.1;
+                        this.edgeDiffusion.add(JSON.stringify({ x: nx, y: ny, vx: newVx, vy: newVy }));
+                    }
+                });
+
+                const pointArray = Array.from(this.points);
+                for (let i = 0; i < 8000; i++) { 
+                    const { x, y, vx, vy } = JSON.parse(pointArray[Math.floor(Math.random() * pointArray.length)]);
+                    const [nx, ny] = scatterInside(x, y, 0.2);
+                    const newVx = vx + (Math.random() - 0.5) * 0.2;
+                    const newVy = vy + (Math.random() - 0.5) * 0.2;
+                    this.centerDiffusion.add(JSON.stringify({ x: nx, y: ny, vx: newVx, vy: newVy }));
+                }
+            }
+
+            calc(frame) {
+                const ratio = 12 * Math.sin(frame / 3.5);
+                const haloRadius = 6 + 8 * Math.abs(Math.sin(frame / 4));
+                const haloNumber = HALO_BASE_NUMBER + HALO_VARIATION_NUMBER * Math.pow(Math.abs(Math.sin(frame / 3.5)), 2);
+                const allPoints = [];
+
+                for (let i = 0; i < haloNumber; i++) {
+                    const t = Math.random() * 2 * Math.PI;
+                    let [x, y] = heartFunction(t, 12.8);
+                    x += Math.random() * 36 - 18;
+                    y += Math.random() * 36 - 18;
+                    const angle = Math.random() * 2 * Math.PI;
+                    const speed = Math.random() * 0.5;
+                    const vx = Math.cos(angle) * speed;
+                    const vy = Math.sin(angle) * speed;
+                    const alpha = Math.random() * 0.8 + 0.2;
+                    allPoints.push({ x, y, vx, vy, size: Math.random() > 0.3 ? 1 : 2, alpha });
+                }
+
+                const allSets = [
+                    ...Array.from(this.points),
+                    ...Array.from(this.edgeDiffusion),
+                    ...Array.from(this.centerDiffusion)
+                ];
+
+                allSets.forEach(p => {
+                    const { x, y, vx, vy } = JSON.parse(p);
+                    let newX = x + ratio * (x - canvas.width / 2) / 80 + (Math.random() * 2 - 1);
+                    let newY = y + ratio * (y - canvas.height / 2) / 80 + (Math.random() * 2 - 1);
+                    const alpha = Math.random() * 0.8 + 0.2;
+                    allPoints.push({
+                        x: newX,
+                        y: newY,
+                        vx,
+                        vy,
+                        size: Math.floor(Math.random() * 3) + 1,
+                        alpha
+                    });
+                });
+
+                this.allPoints[frame] = allPoints;
+            }
+        }
+
+        class FireworkParticle {
+            constructor(x, y, vx, vy, color) {
+                this.x = x;
+                this.y = y;
+                this.vx = vx;
+                this.vy = vy;
+                this.color = color;
+                this.alpha = 1;
+                this.lifetime = 60; // 粒子生命周期
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= 1 / this.lifetime;
+                this.vy += 0.1; // 模拟重力
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.alpha})`;
+                ctx.fillRect(this.x, this.y, 2, 2);
+            }
+        }
+
+        function createFirework(x, y) {
+            const color = {
+                r: Math.floor(Math.random() * 256),
+                g: Math.floor(Math.random() * 256),
+                b: Math.floor(Math.random() * 256)
+            };
+            const particles = [];
+            for (let i = 0; i < FIREWORK_PARTICLE_NUMBER; i++) {
+                const angle = Math.random() * 2 * Math.PI;
+                const speed = Math.random() * FIREWORK_SPEED;
+                const vx = Math.cos(angle) * speed;
+                const vy = Math.sin(angle) * speed;
+                particles.push(new FireworkParticle(x, y, vx, vy, color));
+            }
+            fireworks.push(particles);
+        }
+
+        // 初始化动画
+        const heart = new EnhancedHeart();
+        let frame = 0;
+
+        function draw() {
+            ctx.fillStyle = '#0a0a0a';
+
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 绘制跳动的心的粒子
+            const currentPoints = heart.allPoints[frame % heart.generateFrame];
+            for (let i = 0; i < currentPoints.length; i++) {
+                const p = currentPoints[i];
+                const r = Math.floor(0x60 + Math.random() * 0x9F);
+                const g = Math.floor(0x30 + Math.random() * 0x70); 
+                const b = Math.floor(0x30 + Math.random() * 0x70); 
+                const alpha = p.alpha;
+                ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+
+                p.x += p.vx;
+                p.y += p.vy;
+
+                ctx.fillRect(p.x, p.y, p.size, p.size);
+            }
+
+            // 绘制烟花粒子
+            for (let i = fireworks.length - 1; i >= 0; i--) {
+                const particles = fireworks[i];
+                for (let j = particles.length - 1; j >= 0; j--) {
+                    const particle = particles[j];
+                    particle.update();
+                    if (particle.alpha <= 0) {
+                        particles.splice(j, 1);
+                    } else {
+                        particle.draw();
+                    }
+                }
+                if (particles.length === 0) {
+                    fireworks.splice(i, 1);
+                }
+            }
+
+            // 绘制文字
+            ctx.fillStyle = HEART_COLOR;
+            ctx.font = FONT_STYLE;
+            ctx.textAlign = 'center';
+            ctx.fillText(TEXT, canvas.width / 2, canvas.height - 100);
+
+            frame++;
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+    </script>
+</body>
+
+</html>
