@@ -1,268 +1,263 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>跳动的心</title>
+    <title>贪吃蛇</title>
     <style>
-        body,
-        html {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: #0a0a0a;
+        body {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            background-color: #2c3e50;
+            margin: 0;
+            touch-action: none;
         }
 
-        canvas {
-            display: block;
+        #gameCanvas {
+            background-color: #34495e;
+            margin-top: 20px;
+            border: 2px solid #ecf0f1;
+        }
+
+        #score {
+            color: #ecf0f1;
+            font-size: 24px;
+            font-family: Arial, sans-serif;
+            margin: 10px;
+        }
+
+        #startBtn {
+            padding: 15px 30px;
+            font-size: 20px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 20px;
+        }
+
+        #startBtn:hover {
+            background-color: #219a52;
+        }
+
+        #controlPad {
+            display: none;
+            margin-top: 20px;
+            grid-template-areas: 
+                ". up ."
+                "left . right"
+                ". down .";
+            gap: 10px;
+        }
+
+        .controlBtn {
+            width: 60px;
+            height: 60px;
+            background-color: #3498db;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+        }
+
+        @media (max-width: 600px) {
+            #gameCanvas {
+                width: 90vw;
+                height: 90vw;
+            }
+            #controlPad {
+                display: grid;
+            }
         }
     </style>
 </head>
-
 <body>
-    <canvas id="heartCanvas"></canvas>
+    <div id="score">得分: 0</div>
+    <canvas id="gameCanvas"></canvas>
+    <button id="startBtn">开始游戏</button>
+    <div id="controlPad">
+        <button class="controlBtn" style="grid-area: up">↑</button>
+        <button class="controlBtn" style="grid-area: left">←</button>
+        <button class="controlBtn" style="grid-area: right">→</button>
+        <button class="controlBtn" style="grid-area: down">↓</button>
+    </div>
+
     <script>
-        // 常量定义
-        const HEART_COLOR = "#FF3366";
-        const GENERATE_FRAME = 30;
-        const HALO_BASE_NUMBER = 8000; 
-        const HALO_VARIATION_NUMBER = 10000; 
-        const FONT_STYLE = 'bold 28px 微软雅黑';
-        const TEXT = ' 代码跳动的心 永远守护你';
-        const FIREWORK_PARTICLE_NUMBER = 100; // 每个烟花的粒子数量
-        const FIREWORK_SPEED = 3; // 烟花粒子初始速度
-
-        const canvas = document.getElementById('heartCanvas');
+        const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-
-        let mouseX = canvas.width / 2;
-        let mouseY = canvas.height / 2;
-
-        const fireworks = [];
-
-        // 监听鼠标点击事件
-        canvas.addEventListener('click', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const clickX = e.clientX - rect.left;
-            const clickY = e.clientY - rect.top;
-            createFirework(clickX, clickY);
-        });
-
-        // 设置画布全屏
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        const startBtn = document.getElementById('startBtn');
+        const scoreElement = document.getElementById('score');
+        const controlBtns = document.querySelectorAll('.controlBtn');
+        
+        // 设置画布大小
+        const setCanvasSize = () => {
+            canvas.width = Math.min(400, window.innerWidth - 40);
+            canvas.height = canvas.width;
         }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
+        setCanvasSize();
+        window.addEventListener('resize', setCanvasSize);
 
-        // 心形函数
-        function heartFunction(t, shrinkRatio = 13) {
-            const x = 16 * Math.pow(Math.sin(t), 3);
-            const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
-            return [
-                x * shrinkRatio * 1.2 + canvas.width / 2,
-                y * shrinkRatio + canvas.height / 2
-            ];
-        }
+        let snake = [];
+        let food = {};
+        let direction = 'right';
+        let nextDirection = 'right';
+        let score = 0;
+        let gameLoop;
+        let touchStartX = 0;
+        let touchStartY = 0;
 
-        // 粒子扩散函数
-        function scatterInside(x, y, beta = 0.28) {
-            const ratioX = -beta * Math.log(Math.random());
-            const ratioY = -beta * Math.log(Math.random());
-            return [
-                x - ratioX * (x - canvas.width / 2),
-                y - ratioY * (y - canvas.height / 2)
-            ];
+        // 初始化游戏
+        function initGame() {
+            snake = [{x: 5, y: 5}];
+            score = 0;
+            direction = 'right';
+            nextDirection = 'right';
+            scoreElement.textContent = `得分: ${score}`;
+            createFood();
         }
 
-        class EnhancedHeart {
-            constructor() {
-                this.generateFrame = GENERATE_FRAME;
-                this.points = new Set();
-                this.edgeDiffusion = new Set();
-                this.centerDiffusion = new Set();
-                this.allPoints = {};
-                this.build(5000); 
-                for (let frame = 0; frame < this.generateFrame; frame++) {
-                    this.calc(frame);
-                }
-            }
-
-            build(number) {
-                for (let i = 0; i < number; i++) {
-                    const t = Math.random() * 2 * Math.PI;
-                    const [x, y] = heartFunction(t);
-                    const angle = Math.random() * 2 * Math.PI;
-                    const speed = Math.random() * 0.5;
-                    const vx = Math.cos(angle) * speed;
-                    const vy = Math.sin(angle) * speed;
-                    this.points.add(JSON.stringify({ x, y, vx, vy }));
-                }
-
-                this.points.forEach(p => {
-                    const { x, y, vx, vy } = JSON.parse(p);
-                    for (let i = 0; i < 8; i++) { 
-                        const [nx, ny] = scatterInside(x, y, 0.08);
-                        const newVx = vx + (Math.random() - 0.5) * 0.1;
-                        const newVy = vy + (Math.random() - 0.5) * 0.1;
-                        this.edgeDiffusion.add(JSON.stringify({ x: nx, y: ny, vx: newVx, vy: newVy }));
-                    }
-                });
-
-                const pointArray = Array.from(this.points);
-                for (let i = 0; i < 8000; i++) { 
-                    const { x, y, vx, vy } = JSON.parse(pointArray[Math.floor(Math.random() * pointArray.length)]);
-                    const [nx, ny] = scatterInside(x, y, 0.2);
-                    const newVx = vx + (Math.random() - 0.5) * 0.2;
-                    const newVy = vy + (Math.random() - 0.5) * 0.2;
-                    this.centerDiffusion.add(JSON.stringify({ x: nx, y: ny, vx: newVx, vy: newVy }));
-                }
-            }
-
-            calc(frame) {
-                const ratio = 12 * Math.sin(frame / 3.5);
-                const haloRadius = 6 + 8 * Math.abs(Math.sin(frame / 4));
-                const haloNumber = HALO_BASE_NUMBER + HALO_VARIATION_NUMBER * Math.pow(Math.abs(Math.sin(frame / 3.5)), 2);
-                const allPoints = [];
-
-                for (let i = 0; i < haloNumber; i++) {
-                    const t = Math.random() * 2 * Math.PI;
-                    let [x, y] = heartFunction(t, 12.8);
-                    x += Math.random() * 36 - 18;
-                    y += Math.random() * 36 - 18;
-                    const angle = Math.random() * 2 * Math.PI;
-                    const speed = Math.random() * 0.5;
-                    const vx = Math.cos(angle) * speed;
-                    const vy = Math.sin(angle) * speed;
-                    const alpha = Math.random() * 0.8 + 0.2;
-                    allPoints.push({ x, y, vx, vy, size: Math.random() > 0.3 ? 1 : 2, alpha });
-                }
-
-                const allSets = [
-                    ...Array.from(this.points),
-                    ...Array.from(this.edgeDiffusion),
-                    ...Array.from(this.centerDiffusion)
-                ];
-
-                allSets.forEach(p => {
-                    const { x, y, vx, vy } = JSON.parse(p);
-                    let newX = x + ratio * (x - canvas.width / 2) / 80 + (Math.random() * 2 - 1);
-                    let newY = y + ratio * (y - canvas.height / 2) / 80 + (Math.random() * 2 - 1);
-                    const alpha = Math.random() * 0.8 + 0.2;
-                    allPoints.push({
-                        x: newX,
-                        y: newY,
-                        vx,
-                        vy,
-                        size: Math.floor(Math.random() * 3) + 1,
-                        alpha
-                    });
-                });
-
-                this.allPoints[frame] = allPoints;
-            }
-        }
-
-        class FireworkParticle {
-            constructor(x, y, vx, vy, color) {
-                this.x = x;
-                this.y = y;
-                this.vx = vx;
-                this.vy = vy;
-                this.color = color;
-                this.alpha = 1;
-                this.lifetime = 60; // 粒子生命周期
-            }
-
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                this.alpha -= 1 / this.lifetime;
-                this.vy += 0.1; // 模拟重力
-            }
-
-            draw() {
-                ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.alpha})`;
-                ctx.fillRect(this.x, this.y, 2, 2);
-            }
-        }
-
-        function createFirework(x, y) {
-            const color = {
-                r: Math.floor(Math.random() * 256),
-                g: Math.floor(Math.random() * 256),
-                b: Math.floor(Math.random() * 256)
+        // 生成食物
+        function createFood() {
+            food = {
+                x: Math.floor(Math.random() * (canvas.width/20)),
+                y: Math.floor(Math.random() * (canvas.height/20))
             };
-            const particles = [];
-            for (let i = 0; i < FIREWORK_PARTICLE_NUMBER; i++) {
-                const angle = Math.random() * 2 * Math.PI;
-                const speed = Math.random() * FIREWORK_SPEED;
-                const vx = Math.cos(angle) * speed;
-                const vy = Math.sin(angle) * speed;
-                particles.push(new FireworkParticle(x, y, vx, vy, color));
+            // 确保食物不在蛇身上
+            while(snake.some(segment => segment.x === food.x && segment.y === food.y)) {
+                food = {
+                    x: Math.floor(Math.random() * (canvas.width/20)),
+                    y: Math.floor(Math.random() * (canvas.height/20))
+                };
             }
-            fireworks.push(particles);
         }
 
-        // 初始化动画
-        const heart = new EnhancedHeart();
-        let frame = 0;
+        // 游戏更新
+        function update() {
+            direction = nextDirection;
+            const head = {...snake[0]};
 
+            switch(direction) {
+                case 'up': head.y--; break;
+                case 'down': head.y++; break;
+                case 'left': head.x--; break;
+                case 'right': head.x++; break;
+            }
+
+            // 碰撞检测
+            if (head.x < 0 || head.x >= canvas.width/20 || 
+                head.y < 0 || head.y >= canvas.height/20 ||
+                snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+                gameOver();
+                return;
+            }
+
+            snake.unshift(head);
+
+            // 吃食物检测
+            if (head.x === food.x && head.y === food.y) {
+                score += 10;
+                scoreElement.textContent = `得分: ${score}`;
+                createFood();
+            } else {
+                snake.pop();
+            }
+        }
+
+        // 绘制游戏
         function draw() {
-            ctx.fillStyle = '#0a0a0a';
-
+            ctx.fillStyle = '#34495e';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // 绘制跳动的心的粒子
-            const currentPoints = heart.allPoints[frame % heart.generateFrame];
-            for (let i = 0; i < currentPoints.length; i++) {
-                const p = currentPoints[i];
-                const r = Math.floor(0x60 + Math.random() * 0x9F);
-                const g = Math.floor(0x30 + Math.random() * 0x70); 
-                const b = Math.floor(0x30 + Math.random() * 0x70); 
-                const alpha = p.alpha;
-                ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+            // 画蛇
+            ctx.fillStyle = '#2ecc71';
+            snake.forEach(segment => {
+                ctx.fillRect(segment.x*20, segment.y*20, 18, 18);
+            });
 
-                p.x += p.vx;
-                p.y += p.vy;
-
-                ctx.fillRect(p.x, p.y, p.size, p.size);
-            }
-
-            // 绘制烟花粒子
-            for (let i = fireworks.length - 1; i >= 0; i--) {
-                const particles = fireworks[i];
-                for (let j = particles.length - 1; j >= 0; j--) {
-                    const particle = particles[j];
-                    particle.update();
-                    if (particle.alpha <= 0) {
-                        particles.splice(j, 1);
-                    } else {
-                        particle.draw();
-                    }
-                }
-                if (particles.length === 0) {
-                    fireworks.splice(i, 1);
-                }
-            }
-
-            // 绘制文字
-            ctx.fillStyle = HEART_COLOR;
-            ctx.font = FONT_STYLE;
-            ctx.textAlign = 'center';
-            ctx.fillText(TEXT, canvas.width / 2, canvas.height - 100);
-
-            frame++;
-            requestAnimationFrame(draw);
+            // 画食物
+            ctx.fillStyle = '#e74c3c';
+            ctx.fillRect(food.x*20, food.y*20, 18, 18);
         }
 
-        draw();
+        function gameOver() {
+            clearInterval(gameLoop);
+            startBtn.style.display = 'block';
+            alert(`游戏结束！得分: ${score}`);
+        }
+
+        // 控制逻辑
+        function handleKeyPress(e) {
+            switch(e.key) {
+                case 'ArrowUp':
+                    if (direction !== 'down') nextDirection = 'up';
+                    break;
+                case 'ArrowDown':
+                    if (direction !== 'up') nextDirection = 'down';
+                    break;
+                case 'ArrowLeft':
+                    if (direction !== 'right') nextDirection = 'left';
+                    break;
+                case 'ArrowRight':
+                    if (direction !== 'left') nextDirection = 'right';
+                    break;
+            }
+        }
+
+        // 触摸控制
+        function handleTouchStart(e) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        }
+
+        function handleTouchEnd(e) {
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+            const dx = touchEndX - touchStartX;
+            const dy = touchEndY - touchStartY;
+
+            if (Math.abs(dx) > Math.abs(dy)) {
+                if (dx > 0 && direction !== 'left') nextDirection = 'right';
+                else if (dx < 0 && direction !== 'right') nextDirection = 'left';
+            } else {
+                if (dy > 0 && direction !== 'up') nextDirection = 'down';
+                else if (dy < 0 && direction !== 'down') nextDirection = 'up';
+            }
+        }
+
+        // 按钮控制
+        controlBtns.forEach(btn => {
+            btn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                const dir = btn.textContent.trim();
+                switch(dir) {
+                    case '↑': if (direction !== 'down') nextDirection = 'up'; break;
+                    case '↓': if (direction !== 'up') nextDirection = 'down'; break;
+                    case '←': if (direction !== 'right') nextDirection = 'left'; break;
+                    case '→': if (direction !== 'left') nextDirection = 'right'; break;
+                }
+            });
+        });
+
+        // 事件监听
+        document.addEventListener('keydown', handleKeyPress);
+        canvas.addEventListener('touchstart', handleTouchStart);
+        canvas.addEventListener('touchend', handleTouchEnd);
+
+        // 开始游戏
+        startBtn.addEventListener('click', () => {
+            startBtn.style.display = 'none';
+            initGame();
+            gameLoop = setInterval(() => {
+                update();
+                draw();
+            }, 200);
+        });
+
+        // 阻止默认触摸行为
+        document.addEventListener('touchstart', e => e.preventDefault(), { passive: false });
+        document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
     </script>
 </body>
-
 </html>
